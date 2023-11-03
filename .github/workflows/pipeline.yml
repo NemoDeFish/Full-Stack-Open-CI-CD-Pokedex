@@ -46,3 +46,21 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+      - name: Test Success
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ success() }}
+        with:
+            text: A new version of Pokedex deployed
+            severity: info
+            description: to https://icy-butterfly-6857.fly.dev/ by NemoDeFish
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Test Failure
+        env:
+            COMMIT_URL: ${{ toJson(github.event.url) }}
+          uses: rjstone/discord-webhook-notify@v1
+          if: ${{ failure() }}
+          with:
+              text: Build failed
+              severity: error
+              description: commit "$COMMIT_URL" by NemoDeFish broke the build :(
+              webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
