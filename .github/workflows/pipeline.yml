@@ -52,7 +52,7 @@ jobs:
         with:
             text: A new version of Pokedex deployed
             severity: info
-            description: to https://icy-butterfly-6857.fly.dev/ by NemoDeFish
+            description: "to https://icy-butterfly-6857.fly.dev/ by NemoDeFish"
             webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Test Failure
         env:
