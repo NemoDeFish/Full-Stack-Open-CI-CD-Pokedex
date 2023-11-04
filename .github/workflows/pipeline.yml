@@ -41,7 +41,8 @@ jobs:
         with:
           text: Build failed
           severity: error
-          description: commit ${{ toJson(github.event.head_commit.url) }} by ${{ toJson(github.event.pusher.name) }} broke the build :(
+          description: commit
+          details: "${{ github.event.head_commit.url }} by ${{ github.event.pusher.name }} broke the build :("
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
@@ -60,5 +61,5 @@ jobs:
         with:
           text: A new version of Pokedex deployed
           severity: info
-          description: to https://icy-butterfly-6857.fly.dev/ by ${{ toJson(github.event.pusher.name) }}
+          description: to https://icy-butterfly-6857.fly.dev/ by ${{ github.event.pusher.name }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
