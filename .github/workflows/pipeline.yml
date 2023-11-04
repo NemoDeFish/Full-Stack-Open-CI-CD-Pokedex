@@ -35,6 +35,14 @@ jobs:
         run: flyctl deploy --remote-only
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - name: Test Failure
+        uses: rjstone/discord-webhook-notify@v1
+        if: ${{ failure() }}
+        with:
+          text: Build failed
+          severity: error
+          description: commit ${{ toJson(github.event.head_commit.url) }} by ${{ toJson(github.event.pusher.name) }} broke the build :(
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
@@ -52,13 +60,5 @@ jobs:
         with:
           text: A new version of Pokedex deployed
           severity: info
-          description: to https://icy-butterfly-6857.fly.dev/ by NemoDeFish
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Test Failure
-        uses: rjstone/discord-webhook-notify@v1
-        if: ${{ failure() }}
-        with:
-          text: Build failed
-          severity: error
-          description: commit ${{ github.event.commits.url }} by NemoDeFish broke the build :(
+          description: to https://icy-butterfly-6857.fly.dev/ by ${{ toJson(github.event.pusher.name) }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
