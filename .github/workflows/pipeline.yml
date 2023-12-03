@@ -41,26 +41,30 @@ jobs:
         with:
           text: Build failed
           severity: error
+          # Solution: puts everything into description and puts detail as ''
           description: commit
+          # Solution: does not account for failure for a pull request ?
           details: "${{ github.event.head_commit.url || github.event.pull_request.commits_url }} by ${{ github.event.pusher.name || github.event.sender.login }} broke the build :("
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
+    # Solution: applies if condition for step instead of for job
     if: ${{ github.event_name == 'push' && ! contains(join(github.event.commits.*.message), '#skip') }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - name: Bump version and push tag
-
         uses: anothrNick/github-tag-action@a2c70ae13a881faf2b4953baaa9e49731997ab36
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BUMP: patch
+        # Solution: puts a successful deployment under 'simple_deployment_pipeline' for a successful build instead of for a successful tag release, so it notifies for both a pull request and a push
       - name: Test Success
         uses: rjstone/discord-webhook-notify@v1
         if: ${{ success() }}
         with:
           text: A new version of Pokedex deployed
           severity: info
+          # Solution: uses ${{ github.event.head_commit.author.username }} instead of ${{ github.event.pusher.name }}
           description: to https://icy-butterfly-6857.fly.dev/ by ${{ github.event.pusher.name }}
           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
